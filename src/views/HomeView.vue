@@ -1,9 +1,14 @@
-<script setup>
-import TheWelcome from '../components/TheWelcome.vue'
-</script>
+
 
 <template>
   <main>
-    <TheWelcome />
+    <Navigation/>
   </main>
 </template>
+
+<script>
+import Navigation from "./Navigation.vue"
+export default {
+  components: { Navigation }
+}
+</script>
