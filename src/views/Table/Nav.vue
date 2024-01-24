@@ -18,7 +18,7 @@
         style="gap: 20px"
       >
         <span style="color: white; padding-right: 20px"
-          >Chào {{ authStore?.authUser?.user?.name }}</span
+          >Chào {{ authStore?.authUser?.name }}</span
         >
         <button class="btn btn-primary" style="margin: 0">Đăng Xuất</button>
       </form>
@@ -26,11 +26,10 @@
   </nav>
 </template>
 <script setup>
-  import { useAuthStore } from "../stores/auth";
+  import { useAuthStore } from "@/stores/auth";
   import { useRouter } from "vue-router";
   const router = useRouter();
   const authStore = useAuthStore();
-
   async function logout() {
     await authStore.logout().then(router.push("/login"));
   }

@@ -1,13 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import { useAuthStore } from "../stores/auth";
+
+import { useAuthStore } from "@/stores/auth";
+import { useIsLoading } from "@/stores/loading";
 
 const routes = [
-  {
-    path: "/",
-    name: "home",
-    redirect:{name:'user'}
-  },
   {
     path: "/login",
     name: "login",
@@ -26,6 +22,8 @@ const router = createRouter({
 let isAuthorized = false;
 
 router.beforeEach(async (to, from, next) => {
+  const loadingOverlayStore = useIsLoading();
+  loadingOverlayStore.show();
   const authStore = useAuthStore();
 
   await authStore.getUser().then(() => {
@@ -42,6 +40,7 @@ router.beforeEach(async (to, from, next) => {
       next();
     }
   });
+  loadingOverlayStore.hide();
 });
 
 export default router;

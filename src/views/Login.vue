@@ -1,4 +1,5 @@
 <template>
+  <Loading v-if="loadingOverlayStore.value" />
   <div class="bg-gradient-primary">
     <div class="container">
       <!-- Outer Row -->
@@ -17,7 +18,7 @@
                     <form class="user" @submit.prevent="handelSubmitLogin">
                       <div
                         class="form-group"
-                        :class="{ remove_margin_bottom: errorEmail }"
+                        :class="{ remove_margin_bottom: errors.email }"
                       >
                         <input
                           type="email"
@@ -27,7 +28,6 @@
                           v-model="email"
                           v-bind="emailAttrs"
                           placeholder="Nhập Email ..."
-                          @keyup="validate"
                         />
                       </div>
                       <!-- <span>{{ errorEmail }}</span> -->
@@ -35,13 +35,12 @@
                       <span class="text-danger">{{ errors.email }}</span>
                       <div
                         class="form-group"
-                        :class="{ remove_margin_bottom: errorPassword }"
+                        :class="{ remove_margin_bottom: errors.password }"
                       >
                         <input
                           type="password"
                           class="form-control form-control-user"
                           id="exampleInputPassword"
-                          v
                           v-model="password"
                           v-bind="passwordAttrs"
                           placeholder="Mật Khẩu"
@@ -55,6 +54,10 @@
                             type="checkbox"
                             class="custom-control-input"
                             id="customCheck"
+                            v-model="remember_me"
+                            v-bind="remember_meAttrs"
+                            true-value="true"
+                            undefined-value="false"
                           />
                           <label class="custom-control-label" for="customCheck"
                             >Remember Me</label
@@ -82,7 +85,9 @@
     </div>
   </div>
 </template>
-
+<script>
+  import Loading from "./Loading/Loading.vue";
+</script>
 <script setup>
   import axiosInstance from "../axios";
   import { ref } from "vue";
@@ -90,11 +95,11 @@
   import { useAuthStore } from "../stores/auth";
   import { useForm } from "vee-validate";
   import * as yup from "yup";
-
+  import { useIsLoading } from "../stores/loading";
   const authStore = useAuthStore();
+  const loadingOverlayStore = useIsLoading();
   const errorMessage = ref(null);
-  const errorEmail = ref(null);
-  const errorPassword = ref(null);
+  // const remember_me = ref(false);
   const router = useRouter();
   const form = ref({
     email: "",
@@ -108,20 +113,24 @@
           .email("Email sai định dạng")
           .required("Email không được bỏ trống"),
         password: yup.string().required("Mật khẩu không được để trống"),
+        remember_me: yup.string().nullable(),
       }),
     });
   const [email, emailAttrs] = defineField("email");
   const [password, passwordAttrs] = defineField("password");
+  const [remember_me, remember_meAttrs] = defineField("remember_me");
 
   const handelSubmitLogin = handleSubmit(async () => {
     errorMessage.value = null;
+    controlledValues.value.remember_me =
+      controlledValues.value.remember_me ?? false;
     try {
-      const user = await authStore.login(controlledValues.value);
-      // console.log('đã login');
+      await authStore.login(controlledValues.value);
       router.push("/user");
     } catch (errors) {
+      loadingOverlayStore.hide();
       resetForm();
-      errorMessage.value = errors.message || '';
+      errorMessage.value = errors.message || "";
     }
   });
 </script>

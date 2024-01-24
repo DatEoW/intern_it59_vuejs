@@ -29,19 +29,32 @@
           <td v-html="item.group_text"></td>
           <td v-html="item.active_text"></td>
           <td>
-            <a href="javascript:void(0)" class="btn btn-primary editButton"
+            <a
+              href="javascript:void(0)"
+              class="btn btn-primary editButton"
+              @click="showUpdateModalForm(item.id)"
               ><i class="fas fa-edit"></i
             ></a>
-            <a href="javascript:void(0)" class="btn btn-danger toDelete"
+            <a
+              href="javascript:void(0)"
+              class="btn btn-danger toDelete"
+              @click="showChangeModalForm(item.id, 'delete')"
               ><i class="fa-solid fa-trash-can"></i
             ></a>
-            <a href="javascript:void(0)" class="btn btn-info toLock"
-              ><i
-                class="fas fa-user"
-                style="color: white"
-                v-if="item.is_active"
-              ></i
-              ><i class="fas fa-user-slash" style="color: red" v-else></i
+            <a
+              href="javascript:void(0)"
+              class="btn btn-info"
+              v-if="item.is_active"
+              @click="showChangeModalForm(item.id, 'lock')"
+              ><i class="fas fa-user" style="color: white"></i
+            ></a>
+            <a
+              href="javascript:void(0)"
+              class="btn btn-info renderIcon"
+              @click="showChangeModalForm(item.id, 'unlock')"
+              v-else
+            >
+              <i class="fas fa-user-slash" style="color: red"></i
             ></a>
           </td>
         </tr>
@@ -62,7 +75,12 @@
   </div>
 </template>
 <script setup>
-  import { useUserStore } from "../stores/user";
+  import { ref, defineProps } from "vue";
+  import { useUserStore } from "@/stores/user";
 
   const userStore = useUserStore();
+  const { showUpdateModalForm, showChangeModalForm } = defineProps([
+    "showUpdateModalForm",
+    "showChangeModalForm",
+  ]);
 </script>

@@ -1,14 +1,12 @@
 <template>
   <header>
     <div class="wrapper">
-      <nav>
-        
-      </nav>
+      <nav></nav>
     </div>
   </header>
 
   <RouterView />
 </template>
 
-
 <style scoped></style>
+

@@ -23,13 +23,17 @@
     let total = Number(event.target.value) * userStore.user.current_page;
     let page = 1;
     if (userStore?.user?.total < total) {
-      page = 1
+      page = 1;
     } else {
       page = userStore.user.current_page;
     }
     userStore.getAllUser({
       perPage: Number(event.target.value),
       page: page,
+      name: userStore?.detailUser?.name,
+      email: userStore?.detailUser?.email,
+      is_active: userStore?.detailUser?.is_active,
+      group_role: userStore?.detailUser?.group_role,
     });
   };
 </script>

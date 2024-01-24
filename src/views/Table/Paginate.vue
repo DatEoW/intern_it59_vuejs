@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-  import { useUserStore } from "../stores/user";
+  import { useUserStore } from "@/stores/user";
 
   const userStore = useUserStore();
 
@@ -57,10 +57,14 @@
   };
   const handlePaginate = (page) => {
     if (!page) return;
-    console.log(userStore.user.per_page)
     userStore.getAllUser({
       page,
-      perPage:userStore.user.per_page
+      perPage: userStore.user.per_page,
+      name:userStore?.detailUser?.name,
+      email:userStore?.detailUser?.email,
+      is_active:userStore?.detailUser?.is_active,
+      group_role:userStore?.detailUser?.group_role,
     });
+    
   };
 </script>
