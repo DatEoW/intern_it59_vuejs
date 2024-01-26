@@ -5,6 +5,11 @@ import { useIsLoading } from "@/stores/loading";
 
 const routes = [
   {
+    path: "/",
+    name: "home",
+    redirect: { name: "login" },
+  },
+  {
     path: "/login",
     name: "login",
     component: () => import("../views/Login.vue"),
@@ -26,21 +31,25 @@ router.beforeEach(async (to, from, next) => {
   loadingOverlayStore.show();
   const authStore = useAuthStore();
 
-  await authStore.getUser().then(() => {
-    if (authStore.user) {
-      isAuthorized = true;
-    } else {
-      isAuthorized = false;
-    }
-    if (isAuthorized && to.name === "login") {
-      next({ name: "user" });
-    } else if (!isAuthorized && to.name !== "login") {
-      next({ name: "login" });
-    } else {
-      next();
-    }
-  });
-  loadingOverlayStore.hide();
+  try {
+      await authStore.getUser();
+      if (authStore.user) {
+        isAuthorized = true;
+      } else {
+        isAuthorized = false;
+      }
+      if (isAuthorized && to.name === "login") {
+        next({ name: "user" });
+      } else if (!isAuthorized && to.name !== "login") {
+        next({ name: "login" });
+      } else {
+        next();
+      }
+      loadingOverlayStore.hide();
+    
+  } catch (error) {
+    next({ name: "login" });
+  }
 });
 
 export default router;

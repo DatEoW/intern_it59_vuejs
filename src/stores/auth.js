@@ -4,6 +4,7 @@ import { useIsLoading } from "./loading";
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     authUser: null,
+    justLogIn:false,
   }),
   getters: {
     user: (state) => state.authUser !== null,
@@ -12,6 +13,7 @@ export const useAuthStore = defineStore("auth", {
     async login({ email, password,remember_me }) {
       const loadingOverlayStore = useIsLoading();
       loadingOverlayStore.show();
+    
       const response = await axiosInstance.post(`api/login`, {
         email: email,
         password: password,
@@ -19,6 +21,7 @@ export const useAuthStore = defineStore("auth", {
       });
       loadingOverlayStore.hide();
       localStorage.setItem("token", response.data.token);
+      this.justLogIn=true;
     },
     async getToken() {
       await axiosInstance.get("sanctum/csrf-cookie");

@@ -12,9 +12,6 @@ const axiosInstance = axios.create({
     "X-Requested-With": "XMLHttpRequest",
   },
 });
-axiosInstance.defaults.headers.common[
-  "Authorization"
-] = `Bearer ${localStorage.getItem("token")}`;
 
 
 axiosInstance.interceptors.response.use(

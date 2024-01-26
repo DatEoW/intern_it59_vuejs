@@ -31,6 +31,6 @@
   const router = useRouter();
   const authStore = useAuthStore();
   async function logout() {
-    await authStore.logout().then(router.push("/login"));
+    authStore.logout().then(() => router.push("/login"));
   }
 </script>
