@@ -18,7 +18,7 @@
         style="gap: 20px"
       >
         <span style="color: white; padding-right: 20px"
-          >Chào {{ authStore?.authUser?.name }}</span
+          >Chào {{ authStore?.authUser?.user?.name }}</span
         >
         <button class="btn btn-primary" style="margin: 0">Đăng Xuất</button>
       </form>

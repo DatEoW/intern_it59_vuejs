@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import { useAuthStore } from "@/stores/auth";
-import { useIsLoading } from "@/stores/loading";
 
 const routes = [
   {
@@ -27,26 +26,21 @@ const router = createRouter({
 let isAuthorized = false;
 
 router.beforeEach(async (to, from, next) => {
-  const loadingOverlayStore = useIsLoading();
-  loadingOverlayStore.show();
   const authStore = useAuthStore();
-
   try {
-      await authStore.getUser();
-      if (authStore.user) {
-        isAuthorized = true;
-      } else {
-        isAuthorized = false;
-      }
-      if (isAuthorized && to.name === "login") {
-        next({ name: "user" });
-      } else if (!isAuthorized && to.name !== "login") {
-        next({ name: "login" });
-      } else {
-        next();
-      }
-      loadingOverlayStore.hide();
-    
+    await authStore.getUser();
+    if (authStore.user) {
+      isAuthorized = true;
+    } else {
+      isAuthorized = false;
+    }
+    if (isAuthorized && to.name === "login") {
+      next({ name: "user" });
+    } else if (!isAuthorized && to.name !== "login") {
+      next({ name: "login" });
+    } else {
+      next();
+    }
   } catch (error) {
     next({ name: "login" });
   }

@@ -85,9 +85,7 @@
     </div>
   </div>
 </template>
-<script>
-  import Loading from "./Loading/Loading.vue";
-</script>
+
 <script setup>
   import axiosInstance from "../axios";
   import { ref } from "vue";
@@ -122,13 +120,14 @@
 
   const handelSubmitLogin = handleSubmit(async () => {
     errorMessage.value = null;
-    controlledValues.value.remember_me =
-      controlledValues.value.remember_me ?? false;
+    controlledValues.value.remember_me = controlledValues.value.remember_me
+      ? true
+      : false;
     try {
       await authStore.login(controlledValues.value);
       router.push("/user");
     } catch (errors) {
-      loadingOverlayStore.hide();
+
       resetForm();
       errorMessage.value = errors.message || "";
     }
