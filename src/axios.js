@@ -3,7 +3,7 @@ import CustomError from "./error/error";
 import { useIsLoading } from "@/stores/loading";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8000/",
+  baseURL: "http://192.168.55.62/",
   withXSRFToken: true,
   withCredentials: true,
   headers: {
@@ -16,6 +16,7 @@ axiosInstance.interceptors.request.use(
   function (config) {
     const loadingOverlayStore = useIsLoading();
     loadingOverlayStore.show();
+    config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
     return config;
   },
   function (error) {

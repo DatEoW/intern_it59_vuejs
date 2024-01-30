@@ -85,9 +85,13 @@
     </div>
   </div>
 </template>
-
+<script>
+  import Loading from "./Loading/Loading.vue";
+  export default {
+    components: { Loading },
+  };
+</script>
 <script setup>
-  import axiosInstance from "../axios";
   import { ref } from "vue";
   import { useRouter } from "vue-router";
   import { useAuthStore } from "../stores/auth";
@@ -127,7 +131,6 @@
       await authStore.login(controlledValues.value);
       router.push("/user");
     } catch (errors) {
-
       resetForm();
       errorMessage.value = errors.message || "";
     }

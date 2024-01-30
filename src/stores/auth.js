@@ -10,11 +10,12 @@ export const useAuthStore = defineStore("auth", {
   },
   actions: {
     async login({ email, password, remember_me }) {
-      await axiosInstance.post(`api/login`, {
+      const response = await axiosInstance.post(`api/login`, {
         email: email,
         password: password,
         remember_me: remember_me,
       });
+      localStorage.setItem("token",response.data.token);
     },
     async getUser() {
       try {

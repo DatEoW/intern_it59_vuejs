@@ -22,7 +22,7 @@
                 id="getName"
                 class="form-control"
                 v-model="nameSearch"
-                @input="onInput"
+                @input="onInputNameSearch"
               />
             </div>
 
@@ -617,7 +617,7 @@
 
   let debounceTimer = 500;
 
-  const onInput = () => {
+  const onInputNameSearch = () => {
     clearTimeout(debounceTimer);
     let isWaiting = true;
 
