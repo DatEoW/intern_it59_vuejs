@@ -35,6 +35,5 @@
 <script setup>
   import { ref } from "vue";
   import { useUserStore } from "@/stores/user";
-  const disPlayNumber = ref();
   const userStore = useUserStore();
 </script>

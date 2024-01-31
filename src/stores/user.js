@@ -1,19 +1,19 @@
 import { defineStore } from "pinia";
 import axiosInstance from "@/axios";
 
-
 export const useUserStore = defineStore("user", {
   state: () => ({
     listUser: null,
     detailUser: {
       name: "",
-      email: "email",
+      email: "",
       group_role: 3,
-      is_active: "",
+      is_active: 2,
     },
   }),
   getters: {
     user: (state) => state.listUser,
+    detail: (state) => state.detailUser,
   },
   actions: {
     async getAllUser({
@@ -22,7 +22,7 @@ export const useUserStore = defineStore("user", {
       name = "",
       email = "",
       group_role = 3,
-      is_active = "",
+      is_active = 2,
     }) {
       const data = await axiosInstance.get(
         `/api/user?page=${page}&perPage=${perPage}&name=${name}&email=${email}&group_role=${group_role}&is_active=${is_active}`
@@ -58,9 +58,10 @@ export const useUserStore = defineStore("user", {
       });
     },
     async changeUser({ id, phuongThuc }) {
-      await axiosInstance.post(
-        `api/changeUser/?id=${id}&phuongThuc=${phuongThuc}`
-      );
+      await axiosInstance.post(`api/changeUser`, {
+        id: id,
+        phuongThuc: phuongThuc,
+      });
     },
   },
 });

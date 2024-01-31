@@ -3,7 +3,7 @@ import CustomError from "./error/error";
 import { useIsLoading } from "@/stores/loading";
 
 const axiosInstance = axios.create({
-  baseURL: "http://192.168.55.62/",
+  baseURL: "https://192.168.55.62/",
   withXSRFToken: true,
   withCredentials: true,
   headers: {
@@ -16,7 +16,6 @@ axiosInstance.interceptors.request.use(
   function (config) {
     const loadingOverlayStore = useIsLoading();
     loadingOverlayStore.show();
-    config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
     return config;
   },
   function (error) {
@@ -34,6 +33,7 @@ axiosInstance.interceptors.response.use(
   function (error) {
     const loadingOverlayStore = useIsLoading();
     loadingOverlayStore.hide();
+    // nếu muốn lấy details error thì xài .details, tham khảo code bên error.js
     return Promise.reject(new CustomError(error.response.data));
   }
 );

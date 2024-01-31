@@ -149,9 +149,9 @@
               v-model="name"
               v-bind="nameAttrs"
             />
-            <span id="nameError" class="text-danger error-messages">{{
-              errors.name
-            }}</span>
+            <span id="nameError" class="text-danger error-messages"
+              >{{ errors.name }} {{ errorMessages.name }}</span
+            >
           </div>
           <div class="form-group mb-3">
             <label for="">Email</label>
@@ -164,7 +164,8 @@
               v-bind="emailAttrs"
             />
             <span id="emailError" class="text-danger error-messages"
-              >{{ errors.email }}{{ errorMessages.email }}</span
+              >{{ errors.email }}{{ errorMessagesEmail
+              }}{{ errorMessages.email }}</span
             >
           </div>
           <div class="form-group mb-3">
@@ -177,9 +178,9 @@
               v-model="password"
               v-bind="passwordAttrs"
             />
-            <span id="passwordError" class="text-danger error-messages">{{
-              errors.password
-            }}</span>
+            <span id="passwordError" class="text-danger error-messages"
+              >{{ errors.password }}{{ errorMessages.password }}</span
+            >
           </div>
           <div class="form-group mb-3">
             <p>Nhóm</p>
@@ -195,9 +196,9 @@
               <option value="1">Editor</option>
               <option value="2">Reviwer</option>
             </select>
-            <span id="groupError" class="text-danger error-messages">{{
-              errors.group_role
-            }}</span>
+            <span id="groupError" class="text-danger error-messages"
+              >{{ errors.group_role }}{{ errorMessages.group_role }}</span
+            >
           </div>
         </template>
       </CreateModal>
@@ -238,9 +239,9 @@
               v-model="email"
               v-bind="emailAttrs"
             />
-            <span id="emailError" class="text-danger error-messages"
-              >{{ errors.email }}{{ errorMessages.email }}</span
-            >
+            <span id="emailError" class="text-danger error-messages">{{
+              errors.email
+            }}</span>
           </div>
           <div class="form-group mb-3">
             <label for="">Mật khẩu</label>
@@ -381,7 +382,7 @@
   };
 </script>
 <script setup>
-  import { ref } from "vue";
+  import { ref, reactive } from "vue";
   import { useUserStore } from "../stores/user";
   import { useAuthStore } from "../stores/auth";
   import { useIsLoading } from "../stores/loading";
@@ -397,7 +398,6 @@
   const showUpdateModal = ref(false);
   // khởi tạo id form để lấy dữ liệu form
   const userCheck = ref(true);
-  const activeForm = ref("");
   //khởi tạo phuongthuc và id để truyền vào function userchange
   const phuongThuc = ref();
   const idUserDelete = ref();
@@ -407,6 +407,7 @@
   const loadingOverlayStore = useIsLoading();
   // khởi tạo state user
   const userStore = useUserStore();
+  //render table
   const renderTable = async () => {
     await userStore.getAllUser({});
   };
@@ -414,10 +415,12 @@
 
   const authStore = useAuthStore();
 
+  //show create modal
   const showCreateModalForm = () => {
     showCreateModal.value = true;
     document.body.style.overflow = "hidden";
   };
+  //show update modal
   const showUpdateModalFormInTable = async (idUser) => {
     await userStore.getUser(idUser);
     name.value = userStore.detailUser.name;
@@ -428,93 +431,74 @@
     showUpdateModal.value = true;
     document.body.style.overflow = "hidden";
   };
+  //show change modal
   const showChangeModalFormInTable = async (idUser, phuongThucText) => {
+    userCheck.value = true;
     await userStore.getUser(idUser);
     phuongThuc.value = phuongThucText;
-    idUserDelete.value = userStore.detailUser.id;
-    if (Number(idUser) === Number(authStore.authUser.id)) {
+    idUserDelete.value = idUser;
+    console.log({
+      idAuth: authStore.authUser.user.id,
+      idUserDelete: idUserDelete.value,
+    });
+    if (Number(idUserDelete.value) === Number(authStore.authUser.user.id)) {
       userCheck.value = false;
     }
     showChangeModal.value = true;
     document.body.style.overflow = "hidden";
   };
-
-  const errorMessages = ref({
+  // khai báo các giá trị errors từ server response
+  const errorMessages = reactive({
     name: "",
     email: "",
     password: "",
     group_role: "",
+    is_active: "",
   });
-
+  // tắt modal, reset form
   const closeModal = () => {
-    // selectedItemId.value = null;
     showChangeModal.value = false;
     showUpdateModal.value = false;
     showCreateModal.value = false;
     resetForm();
-    document.body.style.overflow = "";
+    document.body.style.overflow = "auto";
   };
-
-  const createValidationSchema = () => {
+  //định nghĩa validate
+  const ValidationSchema = () => {
     return yup.object({
       email: yup
         .string()
         .email("Email sai định dạng")
         .required("Email không được bỏ trống"),
-      password: yup.string().required("Mật khẩu không được để trống"),
+      password: yup.string().nullable().notRequired(),
       name: yup.string().required("Tên không được để trống"),
       group_role: yup.string().required("Nhóm không được để trống"),
+      is_active: yup.number().nullable(),
+      id: yup.number().nullable(),
     });
   };
-
-  const updateValidationSchema = () => {
-    return yup.object({
-      email: yup
-        .string()
-        .email("Email sai định dạng")
-        .required("Email không được bỏ trống"),
-      password: yup.string().required("Mật khẩu không được để trống"),
-      name: yup.string().required("Tên không được để trống"),
-      group_role: yup.string().required("Nhóm không được để trống"),
-      is_active: yup.string().required("Trạng thái không được để trống"),
-      id: yup.number().required(),
-    });
-  };
-  const searchValidationSchema = () => {
-    return yup.object({
-      email: yup.string(),
-      name: yup.string(),
-      group_role: yup.number(),
-      is_active: yup.number(),
-    });
-  };
-
+  // gọi validate
   const { errors, handleSubmit, defineField, controlledValues, resetForm } =
     useForm({
-      validationSchema: () => {
-        if (activeForm.vale === "update") {
-          return updateValidationSchema();
-        }
-        if (activeForm.value === "search") {
-          return searchValidationSchema();
-        }
-        if (activeForm.value === "create") {
-          return createValidationSchema();
-        }
-      },
+      validationSchema: ValidationSchema(),
     });
+  // khai báo các field làm việc với validate
   const [name, nameAttrs] = defineField("name");
   const [password, passwordAttrs] = defineField("password");
   const [email, emailAttrs] = defineField("email");
   const [is_active, is_activeAttrs] = defineField("is_active");
   const [group_role, group_roleAttrs] = defineField("group_role");
   const [id, idAttrs] = defineField("id");
-
+  //tạo user
   const onSubmitCreateModal = handleSubmit(async () => {
     showCreateModal.value = false;
-    activeForm.value = ref("create");
     try {
-      await userStore.createUser(controlledValues.value);
+      await userStore.createUser({
+        name: name.value,
+        email: email.value,
+        group_role: group_role.value,
+        password: password.value,
+      });
       await userStore.getAllUser({});
       Swal.fire({
         title: "Thêm thành công",
@@ -525,12 +509,29 @@
       closeModal();
       resetForm();
     } catch (errors) {
-      errorMessages.value.email = errors.message || "";
+      errorMessages.name =
+        errors.details.name && errors.details.name.length
+          ? errors.details.name[0]
+          : "";
+      errorMessages.email =
+        errors.details.email && errors.details.email.length
+          ? errors.details.email[0]
+          : "";
+      errorMessages.password =
+        errors.details.password && errors.details.password.length
+          ? errors.details.password[0]
+          : "";
+      errorMessages.group_role =
+        errors.details.group_role && errors.details.group_role.length
+          ? errors.details.group_role[0]
+          : "";
+
+      showCreateModal.value = true;
     }
   });
+  //update user
   const onSubmitUpdateModal = handleSubmit(async () => {
     showUpdateModal.value = false;
-    activeForm.value = ref("update");
     try {
       await userStore.updateUser(controlledValues.value);
       await userStore.getAllUser({});
@@ -544,9 +545,30 @@
       closeModal();
       resetForm();
     } catch (errors) {
-      errorMessages.value.email = errors.message || "";
+      errorMessages.name =
+        errors.details.name && errors.details.name.length
+          ? errors.details.name[0]
+          : "";
+      errorMessages.email =
+        errors.details.email && errors.details.email.length
+          ? errors.details.email[0]
+          : "";
+      errorMessages.password =
+        errors.details.password && errors.details.password.length
+          ? errors.details.password[0]
+          : "";
+      errorMessages.group_role =
+        errors.details.group_role && errors.details.group_role.length
+          ? errors.details.group_role[0]
+          : "";
+      errorMessages.is_active =
+        errors.details.is_active && errors.details.is_active.length
+          ? errors.details.is_active[0]
+          : "";
+      showUpdateModal.value = true;
     }
   });
+  //change status user( lock,unlock,delete)
   const onSubmitChangeModal = async () => {
     showChangeModal.value = false;
     try {
@@ -554,7 +576,8 @@
         id: idUserDelete.value,
         phuongThuc: phuongThuc.value,
       });
-      await userStore.getAllUser({});
+
+      await userStore.getAllUser({ page: userStore.user.current_page });
       if (phuongThuc.value === "delete") {
         Swal.fire({
           title: "Xóa thành công",
@@ -582,31 +605,28 @@
       Swal.fire({
         title: errors,
         text: ``,
-        icon: "success",
+        icon: "errors",
         timer: 2000,
       });
     }
   };
-
+  //khai báo các biến để xử lý search
   const nameSearch = ref();
   const emailSearch = ref();
   const group_roleSearch = ref("");
   const is_activeSearch = ref("");
-  const onSubmitSearch = handleSubmit(async () => {
-    activeForm.value = ref("search");
-    try {
-      await userStore.getAllUser({
-        page: 1,
-        perPage: 10,
-        name: nameSearch.value,
-        email: emailSearch.value,
-        group_role: group_roleSearch.value,
-        is_active: is_activeSearch.value,
-      });
-    } catch (errors) {
-      alert(errors);
-    }
-  });
+  // khi bấm nút tìm kiếm
+  const onSubmitSearch = async () => {
+    await userStore.getAllUser({
+      page: 1,
+      perPage: 10,
+      name: nameSearch.value,
+      email: emailSearch.value,
+      group_role: group_roleSearch.value,
+      is_active: is_activeSearch.value,
+    });
+  };
+  // reset lại kết quả tìm kiếm
   const resetSearch = async () => {
     await userStore.getAllUser({});
     nameSearch.value = "";
@@ -615,8 +635,8 @@
     group_roleSearch.value = "";
   };
 
+  // xử lý search on key : nameSearch
   let debounceTimer = 500;
-
   const onInputNameSearch = () => {
     clearTimeout(debounceTimer);
     let isWaiting = true;
@@ -633,6 +653,5 @@
     loadingOverlayStore.hide();
     await userStore.searchNameUser(nameSearch.value);
     loadingOverlayStore.hide();
-    userStore.detailUser.name = nameSearch.value;
   };
 </script>

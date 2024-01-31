@@ -101,7 +101,6 @@
   const authStore = useAuthStore();
   const loadingOverlayStore = useIsLoading();
   const errorMessage = ref(null);
-  // const remember_me = ref(false);
   const router = useRouter();
   const form = ref({
     email: "",

@@ -15,7 +15,6 @@ export const useAuthStore = defineStore("auth", {
         password: password,
         remember_me: remember_me,
       });
-      localStorage.setItem("token",response.data.token);
     },
     async getUser() {
       try {

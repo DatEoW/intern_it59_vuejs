@@ -20,6 +20,9 @@
   const userStore = useUserStore();
 
   const changePerPage = (event) => {
+    //kiểm tra số lượng lý thuyết total phải có,
+    // từ đó so sánh với total từ response,
+    // nếu bé hơn total trên lý thuyết --> trả về page 1
     let total = Number(event.target.value) * userStore.user.current_page;
     let page = 1;
     if (userStore?.user?.total < total) {
@@ -30,10 +33,6 @@
     userStore.getAllUser({
       perPage: Number(event.target.value),
       page: page,
-      name: userStore?.detailUser?.name,
-      email: userStore?.detailUser?.email,
-      is_active: userStore?.detailUser?.is_active,
-      group_role: userStore?.detailUser?.group_role,
     });
   };
 </script>

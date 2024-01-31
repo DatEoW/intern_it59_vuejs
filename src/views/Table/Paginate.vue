@@ -55,16 +55,14 @@
     const page = link?.split("page=").at(1);
     return page;
   };
+
   const handlePaginate = (page) => {
     if (!page) return;
+   
     userStore.getAllUser({
       page,
       perPage: userStore.user.per_page,
-      name:userStore?.detailUser?.name,
-      email:userStore?.detailUser?.email,
-      is_active:userStore?.detailUser?.is_active,
-      group_role:userStore?.detailUser?.group_role,
+     
     });
-    
   };
 </script>
