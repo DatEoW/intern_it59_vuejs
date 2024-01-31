@@ -1,6 +1,6 @@
 <template>
   <!-- {{-- header --}} -->
-  <nav class="navbar bg-body-tertiary container-fluid">
+  <nav class="navbar bg-body-tertiary container-fluid p-0">
     <div class="container-fluid text-center" style="background-color: black">
       <a class="navbar-brand" href="#">
         <img

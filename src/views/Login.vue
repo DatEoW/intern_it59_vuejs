@@ -49,7 +49,7 @@
 
                       <span class="text-danger">{{ errors.password }}</span>
                       <div class="form-group">
-                        <div class="custom-control custom-checkbox small">
+                        <div class="custom-control custom-checkbox small d-flex align-items-center">
                           <input
                             type="checkbox"
                             class="custom-control-input"
