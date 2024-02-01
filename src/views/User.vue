@@ -150,7 +150,7 @@
               v-bind="nameAttrs"
             />
             <span id="nameError" class="text-danger error-messages"
-              >{{ errors.name }} {{ errorMessages.name }}</span
+              >{{ errors.name }} {{ errorMessagesCreate.name }}</span
             >
           </div>
           <div class="form-group mb-3">
@@ -164,8 +164,7 @@
               v-bind="emailAttrs"
             />
             <span id="emailError" class="text-danger error-messages"
-              >{{ errors.email }}{{ errorMessagesEmail
-              }}{{ errorMessages.email }}</span
+              >{{ errors.email }} {{ errorMessagesCreate.email }}</span
             >
           </div>
           <div class="form-group mb-3">
@@ -179,7 +178,7 @@
               v-bind="passwordAttrs"
             />
             <span id="passwordError" class="text-danger error-messages"
-              >{{ errors.password }}{{ errorMessages.password }}</span
+              >{{ errors.password }}{{ errorMessagesCreate.password }}</span
             >
           </div>
           <div class="form-group mb-3">
@@ -197,7 +196,7 @@
               <option value="2">Reviwer</option>
             </select>
             <span id="groupError" class="text-danger error-messages"
-              >{{ errors.group_role }}{{ errorMessages.group_role }}</span
+              >{{ errors.group_role }}{{ errorMessagesCreate.group_role }}</span
             >
           </div>
         </template>
@@ -225,9 +224,9 @@
               v-model="name"
               v-bind="nameAttrs"
             />
-            <span id="nameError" class="text-danger error-messages">{{
-              errors.name
-            }}</span>
+            <span id="nameError" class="text-danger error-messages"
+              >{{ errors.name }}{{ errorMessagesUpdate.name }}</span
+            >
           </div>
           <div class="form-group mb-3">
             <label for="">Email</label>
@@ -239,9 +238,9 @@
               v-model="email"
               v-bind="emailAttrs"
             />
-            <span id="emailError" class="text-danger error-messages">{{
-              errors.email
-            }}</span>
+            <span id="emailError" class="text-danger error-messages"
+              >{{ errors.email }}{{ errorMessagesUpdate.email }}</span
+            >
           </div>
           <div class="form-group mb-3">
             <label for="">Mật khẩu</label>
@@ -253,9 +252,9 @@
               v-model="password"
               v-bind="passwordAttrs"
             />
-            <span id="passwordError" class="text-danger error-messages">{{
-              errors.password
-            }}</span>
+            <span id="passwordError" class="text-danger error-messages"
+              >{{ errors.password }}{{ errorMessagesUpdate.password }}</span
+            >
           </div>
           <div class="form-group mb-3">
             <p>Nhóm</p>
@@ -271,9 +270,9 @@
               <option value="1">Editor</option>
               <option value="2">Reviwer</option>
             </select>
-            <span id="groupError" class="text-danger error-messages">{{
-              errors.group_role
-            }}</span>
+            <span id="groupError" class="text-danger error-messages"
+              >{{ errors.group_role }}{{ errorMessagesUpdate.group_role }}</span
+            >
           </div>
           <div class="form-group">
             <p>Trạng thái</p>
@@ -288,9 +287,9 @@
               <option value="1">Hoạt động</option>
               <option value="0">Tạm khóa</option>
             </select>
-            <span id="status_Error-1" class="text-danger error-messages">{{
-              errors.is_active
-            }}</span>
+            <span id="status_Error-1" class="text-danger error-messages"
+              >{{ errors.is_active }}{{ errorMessagesUpdate.is_active }}</span
+            >
           </div>
         </template>
       </UpdateModal>
@@ -448,7 +447,13 @@
     document.body.style.overflow = "hidden";
   };
   // khai báo các giá trị errors từ server response
-  const errorMessages = reactive({
+  const errorMessagesCreate = reactive({
+    name: "",
+    email: "",
+    password: "",
+    group_role: "",
+  });
+  const errorMessagesUpdate = reactive({
     name: "",
     email: "",
     password: "",
@@ -470,7 +475,7 @@
         .string()
         .email("Email sai định dạng")
         .required("Email không được bỏ trống"),
-      password: yup.string().nullable().notRequired(),
+      password: yup.string().required("Mật khẩu không được bỏ trống"),
       name: yup.string().required("Tên không được để trống"),
       group_role: yup.string().required("Nhóm không được để trống"),
       is_active: yup.number().nullable(),
@@ -509,19 +514,19 @@
       closeModal();
       resetForm();
     } catch (errors) {
-      errorMessages.name =
+      errorMessagesCreate.name =
         errors.details.name && errors.details.name.length
           ? errors.details.name[0]
           : "";
-      errorMessages.email =
+      errorMessagesCreate.email =
         errors.details.email && errors.details.email.length
           ? errors.details.email[0]
           : "";
-      errorMessages.password =
+      errorMessagesCreate.password =
         errors.details.password && errors.details.password.length
           ? errors.details.password[0]
           : "";
-      errorMessages.group_role =
+      errorMessagesCreate.group_role =
         errors.details.group_role && errors.details.group_role.length
           ? errors.details.group_role[0]
           : "";
@@ -534,8 +539,15 @@
     showUpdateModal.value = false;
     try {
       await userStore.updateUser(controlledValues.value);
-      await userStore.getAllUser({});
-
+      await userStore.getAllUser({
+        page: userStore.user.current_page,
+        perPage: userStore.user.per_page,
+        name: nameSearch.value,
+        email: emailSearch.value,
+        group_role: group_roleSearch.value,
+        is_active: group_roleSearch.value,
+      });
+     
       Swal.fire({
         title: "Sửa thành công",
         text: "Sửa thành viên mới thành công",
@@ -545,23 +557,23 @@
       closeModal();
       resetForm();
     } catch (errors) {
-      errorMessages.name =
+      errorMessagesUpdate.name =
         errors.details.name && errors.details.name.length
           ? errors.details.name[0]
           : "";
-      errorMessages.email =
+      errorMessagesUpdate.email =
         errors.details.email && errors.details.email.length
           ? errors.details.email[0]
           : "";
-      errorMessages.password =
+      errorMessagesUpdate.password =
         errors.details.password && errors.details.password.length
           ? errors.details.password[0]
           : "";
-      errorMessages.group_role =
+      errorMessagesUpdate.group_role =
         errors.details.group_role && errors.details.group_role.length
           ? errors.details.group_role[0]
           : "";
-      errorMessages.is_active =
+      errorMessagesUpdate.is_active =
         errors.details.is_active && errors.details.is_active.length
           ? errors.details.is_active[0]
           : "";
@@ -577,7 +589,10 @@
         phuongThuc: phuongThuc.value,
       });
 
-      await userStore.getAllUser({ page: userStore.user.current_page });
+      await userStore.getAllUser({
+        page: userStore.user.current_page,
+        perPage: userStore.user.per_page,
+      });
       if (phuongThuc.value === "delete") {
         Swal.fire({
           title: "Xóa thành công",
@@ -650,8 +665,7 @@
     }
   };
   const onNameSearch = async () => {
-    loadingOverlayStore.hide();
-    await userStore.searchNameUser(nameSearch.value);
-    loadingOverlayStore.hide();
+    await userStore.getAllUser({ name: nameSearch.value });
+    
   };
 </script>

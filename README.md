@@ -1,29 +1,37 @@
-#  intern_it58_vuejs
 
-This template should help get you started developing with Vue 3 in Vite.
+# Dự án Vuejs kết hợp Api Laravel
 
-## Recommended IDE Setup
+## Giới thiệu: Dự án quản lý user với các chức năng login, Crud user được xử lý bằng Api
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+### Các chức năng chính
 
-## Customize configuration
+- ***Login***
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+Khi đăng nhập thành công sẽ trả về 1 token được tạo từ jwt, sau đó sẽ trả token về client theo cookies
 
-## Project Setup
+- ***Xác minh người dùng cho mỗi request***
 
-```sh
-npm install
-```
+Mỗi request đều kèm token để xác minh
+Client gửi cookies về cho server, ở đây server sẽ xử lý cookies để lấy token người dùng và luôn luôn gắn vào headers
 
-### Compile and Hot-Reload for Development
+- ***Tương tác với database***
+  1. Tạo mới người dùng
+  2. Xem danh sách người dùng
+  3. Cập nhật người dùng
+  4. Xóa người dùng
+  5. Khóa người dùng
+  6. Mở khóa người dùng
+  7. Tìm kiếm người dùng
 
-```sh
-npm run dev
-```
+### Các package được sử dụng
 
-### Compile and Minify for Production
+- Pinia: Quản lý state
+- Axios: Xử lý Api
+- Bootstrap: Hỗ trợ UI
+- Vite: Hỗ trợ cho Vuejs
+- Vee-validate/ yup: Hỗ trợ validate input
+- Sweet alert: Hỗ trợ tạo popup thông báo
 
-```sh
-npm run build
-```
+## Cách deloy lên host
+
+1. Set up cấu hình axios với "base url"

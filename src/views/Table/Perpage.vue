@@ -6,8 +6,9 @@
         class="form-select form-select-sm w-auto"
         id="perPage"
         @change="changePerPage"
+        v-model="perpage"
       >
-        <option value="10">10</option>
+        <option value="10" selected>10</option>
         <option value="15">15</option>
         <option value="20">20</option>
       </select>
@@ -17,21 +18,33 @@
 </template>
 <script setup>
   import { useUserStore } from "@/stores/user";
+  import { ref } from "vue";
+  const perpage = ref(10);
   const userStore = useUserStore();
 
   const changePerPage = (event) => {
     //kiểm tra số lượng lý thuyết total phải có,
     // từ đó so sánh với total từ response,
-    // nếu bé hơn total trên lý thuyết --> trả về page 1
+    // nếu bé hơn total trên lý thuyết --> trả về page cuối
     let total = Number(event.target.value) * userStore.user.current_page;
+    console.log({
+      page: perpage.value,
+      current_page: userStore.user.current_page,
+      total: total,
+      totalresponse: userStore.user.total,
+      last_page: Number(userStore.user.total) / Number(perpage.value),
+    });
     let page = 1;
-    if (userStore?.user?.total < total) {
-      page = 1;
+    let last_page = Math.ceil(
+      Number(userStore.user.total) / Number(perpage.value)
+    );
+    if (userStore.user.total < total) {
+      page = last_page;
     } else {
       page = userStore.user.current_page;
     }
     userStore.getAllUser({
-      perPage: Number(event.target.value),
+      perPage: Number(perpage.value),
       page: page,
     });
   };
