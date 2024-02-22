@@ -17,6 +17,7 @@
           <th scope="col">Hành Động</th>
         </tr>
       </thead>
+
       <tbody id="tbody-table">
         <tr v-for="(item, index) in userStore?.user?.data" :key="item.id">
           <th scope="row">{{ item.id }}</th>
@@ -44,15 +45,16 @@
             <a
               href="javascript:void(0)"
               class="btn btn-info"
-              v-if="item.is_active"
+              v-if="item.is_active == 1"
               @click="showChangeModalForm(item.id, 'lock')"
               ><i class="fas fa-user" style="color: white"></i
-            ></a>
+              ></a
+            >
             <a
               href="javascript:void(0)"
               class="btn btn-info renderIcon"
-              @click="showChangeModalForm(item.id, 'unlock')"
               v-else
+              @click="showChangeModalForm(item.id, 'unlock')"
             >
               <i class="fas fa-user-slash" style="color: red"></i
             ></a>

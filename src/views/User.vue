@@ -439,6 +439,7 @@
     console.log({
       idAuth: authStore.authUser.user.id,
       idUserDelete: idUserDelete.value,
+      phuongThuc: phuongThucText,
     });
     if (Number(idUserDelete.value) === Number(authStore.authUser.user.id)) {
       userCheck.value = false;

@@ -3,7 +3,7 @@ import CustomError from "./error/error";
 import { useIsLoading } from "@/stores/loading";
 
 const axiosInstance = axios.create({
-  baseURL: "https://192.168.55.62/",
+  baseURL: "https://tranphatdat.name.vn/",
   withXSRFToken: true,
   withCredentials: true,
   headers: {

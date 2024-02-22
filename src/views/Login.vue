@@ -1,4 +1,4 @@
-<template>
+<template class="bg-gradient-primary">
   <Loading v-if="loadingOverlayStore.value" />
   <div class="bg-gradient-primary">
     <div class="container">
@@ -49,7 +49,9 @@
 
                       <span class="text-danger">{{ errors.password }}</span>
                       <div class="form-group">
-                        <div class="custom-control custom-checkbox small d-flex align-items-center">
+                        <div
+                          class="custom-control custom-checkbox small d-flex align-items-center"
+                        >
                           <input
                             type="checkbox"
                             class="custom-control-input"
